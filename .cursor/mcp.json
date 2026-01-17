@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "supermemory": {
+      "command": "node",
+      "args": ["src/server.js"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
