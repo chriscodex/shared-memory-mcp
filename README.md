@@ -28,14 +28,22 @@ cd mcp-team-memory
 npm install
 ```
 
-### 2. Configura tu API Key de Supermemory (Opcional)
+### 2. Configura tu API Key de Supermemory (Recomendado)
 
 ```bash
-# Crea un archivo .env
-echo "SUPERMEMORY_API_KEY=tu_api_key_aqui" > .env
+# Copia el archivo de ejemplo
+cp .env.example .env
+
+# Edita el archivo .env con tu API key real
+# SUPERMEMORY_API_KEY=tu_api_key_aqui
 ```
 
-> **Nota**: Sin la API key, el prototipo funciona en modo simulado.
+**Obtén tu API Key:**
+1. Ve a [https://supermemory.ai/](https://supermemory.ai/)
+2. Regístrate y obtén tu API key
+3. Pégala en el archivo `.env`
+
+> **Nota**: Sin la API key, funciona en modo simulado con datos de prueba.
 
 ### 3. Verifica que funcione
 
@@ -94,16 +102,19 @@ npm run dev
 ### ✅ Implementado
 - Estructura básica del proyecto
 - Servidor MCP funcional
+- Cliente HTTP para Supermemory API
 - Dos herramientas básicas (búsqueda y almacenamiento)
 - Configuración de Cursor
-- Modo simulado sin API key
+- Modo híbrido: simulado sin API key, real con API key
+- Manejo de errores y configuración de entorno
+- Documentación completa
 
 ### 🔄 Próximos Pasos
-- [ ] Integración real con Supermemory API
-- [ ] Autenticación y manejo de errores
+- [ ] Testing exhaustivo con API real de Supermemory
 - [ ] Filtrado avanzado por usuario/workspace
-- [ ] Sincronización automática de conversaciones
-- [ ] Interfaz web para gestión manual
+- [ ] Sincronización automática de conversaciones de Cursor
+- [ ] Interfaz web para gestión manual de memorias
+- [ ] Métricas de uso y rendimiento
 
 ## 🤝 Contribuir
 

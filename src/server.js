@@ -8,9 +8,12 @@ import {
   ListToolsRequestSchema,
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
+import SupermemoryClient from './supermemory-client.js';
 
 class SupermemoryMCPServer {
   constructor() {
+    this.supermemory = new SupermemoryClient();
+
     this.server = new Server(
       {
         name: "supermemory-mcp",
@@ -107,33 +110,47 @@ class SupermemoryMCPServer {
     try {
       const { query, user_id = "team", limit = 5 } = args;
 
-      // TODO: Implement actual Supermemory API call
-      // For now, return mock data
-      const mockResults = [
-        {
-          id: "1",
-          content: `Found relevant memory about: ${query}`,
-          title: "Mock Memory Result",
-          score: 0.95,
-          tags: ["mock", "test"],
-          created_at: new Date().toISOString()
-        }
-      ];
+      if (!this.supermemory.isReady()) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🔍 Búsqueda simulada para "${query}":\n\n📝 **Resultado de Prueba**\nInformación relacionada con: ${query}\n🏷️ Tags: búsqueda, simulado\n\n⚠️ *API de Supermemory no configurada. Configure SUPERMEMORY_API_KEY para funcionalidad completa.*`
+            }
+          ]
+        };
+      }
+
+      const results = await this.supermemory.searchMemory(query, user_id, limit);
+
+      if (results.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `🔍 No se encontraron resultados para "${query}" en la memoria del equipo.`
+            }
+          ]
+        };
+      }
+
+      const formattedResults = results.map(result =>
+        `📝 **${result.title}**\n${result.content}\n🏷️ Tags: ${result.tags.join(", ") || "sin tags"}\n📊 Relevancia: ${(result.score * 100).toFixed(1)}%`
+      ).join("\n\n");
 
       return {
         content: [
           {
             type: "text",
-            text: `Search results for "${query}":\n\n${mockResults.map(result =>
-              `📝 **${result.title}**\n${result.content}\n🏷️ Tags: ${result.tags.join(", ")}\n\n`
-            ).join("")}\n\n⚠️ *This is mock data. Supermemory integration pending.*`
+            text: `🔍 Resultados de búsqueda para "${query}":\n\n${formattedResults}`
           }
         ]
       };
     } catch (error) {
+      console.error('Search error:', error);
       throw new McpError(
         ErrorCode.InternalError,
-        `Search failed: ${error.message}`
+        `Error al buscar memoria: ${error.message}`
       );
     }
   }
@@ -142,22 +159,36 @@ class SupermemoryMCPServer {
     try {
       const { content, title, tags = [], user_id } = args;
 
-      // TODO: Implement actual Supermemory API call
-      // For now, simulate storage
-      const memoryId = `mem_${Date.now()}`;
+      if (!this.supermemory.isReady()) {
+        // Modo simulado cuando no hay API key
+        const memoryId = `mem_${Date.now()}`;
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ Memoria almacenada exitosamente (simulado)!\n\n📝 **${title}**\n${content}\n🏷️ Tags: ${tags.join(", ") || "sin tags"}\n🆔 ID: ${memoryId}\n\n⚠️ *API de Supermemory no configurada. Configure SUPERMEMORY_API_KEY para persistencia real.*`
+            }
+          ]
+        };
+      }
+
+      // Almacenamiento real con Supermemory API
+      const result = await this.supermemory.storeMemory(content, title, tags, user_id);
 
       return {
         content: [
           {
             type: "text",
-            text: `✅ Memory stored successfully!\n\n📝 **${title}**\n${content}\n🏷️ Tags: ${tags.join(", ") || "none"}\n🆔 ID: ${memoryId}\n\n⚠️ *This is simulated. Actual Supermemory storage pending.*`
+            text: `✅ Memoria almacenada exitosamente!\n\n📝 **${title}**\n${content}\n🏷️ Tags: ${tags.join(", ") || "sin tags"}\n🆔 ID: ${result.id}\n\n💾 Memoria persistente guardada en Supermemory.`
           }
         ]
       };
     } catch (error) {
+      console.error('Storage error:', error);
       throw new McpError(
         ErrorCode.InternalError,
-        `Storage failed: ${error.message}`
+        `Error al almacenar memoria: ${error.message}`
       );
     }
   }
