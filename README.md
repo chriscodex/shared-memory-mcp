@@ -114,7 +114,7 @@ Guarda que el endpoint de login es /api/auth/login
 
 ```
 "Guarda que me gusta viajar"
-→ Se guarda como: "Preferencias: Yo, el usuario Chris guardo: me gusta viajar"
+→ Se guarda como: "Preferencias - El usuario Chris ha guardado: me gusta viajar"
 ```
 
 Esto asegura que:

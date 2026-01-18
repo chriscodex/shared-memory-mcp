@@ -63,7 +63,7 @@ class SupermemoryClient {
    */
   formatUserContent(content, userName) {
     if (!userName) return content;
-    return `Yo, el usuario ${userName} guardo: ${content}`;
+    return `El usuario ${userName} ha guardado: ${content}`;
   }
 
   /**
@@ -86,7 +86,7 @@ class SupermemoryClient {
         messages: [
           {
             role: 'user',
-            content: `${title}: ${formattedContent}`,
+            content: `${title} - ${formattedContent}`,
           }
         ],
         containerTags: [this.defaultUserId]
