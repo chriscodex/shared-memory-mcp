@@ -6,6 +6,20 @@
 
 Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto del proyecto de forma persistente desde cualquier proyecto.
 
+## 🎯 Casos de Uso
+
+### 👥 **Para Equipos**
+- **Memoria compartida del equipo** across todos los proyectos
+- **Conocimientos persistentes** que sobreviven a reinicios de Cursor
+- **Colaboración mejorada** entre miembros del equipo
+- **Contexto consistente** en todos los proyectos
+
+### 👤 **Para Individuos**
+- **Memoria entre agentes**: Un agente guarda, otro agente puede buscar
+- **Contexto persistente**: Naturalmente Cursor no comparte memoria entre chats/agentes
+- **Continuidad**: Mantén el contexto entre diferentes sesiones de trabajo
+- **Productividad personal**: Accede a información desde cualquier chat de Cursor
+
 ## 🚀 Instalación Global
 
 ```bash
