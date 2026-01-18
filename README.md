@@ -6,49 +6,26 @@
 
 Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto del proyecto de forma persistente desde cualquier proyecto.
 
-## 🚀 Instalación Global (Recomendado)
+## 🚀 Instalación Global
 
-### Opción 1: Instalación Automática
 ```bash
 # Desde la raíz del proyecto
 ./install-global.sh
 ```
 
-### Opción 2: Instalación Manual
-```bash
-# Instalar dependencias
-npm install
+Este script instala el MCP globalmente y configura todo automáticamente.
 
-# Crear enlace simbólico global
-npm link
-
-# Configurar MCP global
-mkdir -p ~/.cursor
-cat > ~/.cursor/mcp.json << 'EOF'
-{
-  "mcpServers": {
-    "memory": {
-      "command": "team-memory-mcp",
-      "args": [],
-      "env": {
-        "NODE_ENV": "production"
-      }
-    }
-  }
-}
-EOF
-```
-
-### Configurar API Key y Usuario
+### Configuración
 ```bash
 # Copiar archivo de ejemplo
 cp .env.example .env
 
-# Editar .env (2 variables requeridas)
-SUPERMEMORY_API_KEY=tu_api_key_real_aqui
-DEFAULT_USER_ID=tu-nombre
+# Configura tus variables:
+# - SUPERMEMORY_API_KEY: Tu API key de Supermemory
+# - LANGUAGE: en (inglés) o es (español)
+# - DEFAULT_USER_ID: Tu nombre
 
-# Configurar variables globales
+# Aplicar configuración global
 ./setup-env.sh
 ```
 
@@ -56,18 +33,15 @@ DEFAULT_USER_ID=tu-nombre
 1. Ve a [Supermemory.ai](https://supermemory.ai/)
 2. Regístrate y obtén tu API key gratuita
 3. Pégala en `SUPERMEMORY_API_KEY`
-4. Pon tu nombre en `DEFAULT_USER_ID`
-5. Ejecuta `./setup-env.sh`
 
 ### ¡Listo! ✅
-Reinicia Cursor completamente y los agentes tendrán acceso global a:
-- `memory/team_memory_search` 🔍 - Buscar información
-- `memory/team_memory_store` 💾 - Guardar información
+Reinicia Cursor y tendrás memoria de equipo en todos tus proyectos:
+- `memory/team_memory_search` 🔍 - Buscar información del equipo
+- `memory/team_memory_store` 💾 - Guardar información automáticamente
 
-**Estado:** ✅ Instalación global probada y funcionando
-**API:** ✅ Variables de entorno configuradas correctamente
+**¿Por qué global?** La memoria del equipo debe ser consistente across todos los proyectos donde trabajes.
 
-> **Nota:** Si ves mensajes de "modo demo", ejecuta `./setup-env.sh` para configurar las variables globales.
+> **Nota:** La instalación local por proyecto no es recomendable ya que fragmentaría la memoria del equipo y requeriría configuración duplicada en cada repositorio.
 
 ## 📋 Requisitos
 
@@ -75,21 +49,6 @@ Reinicia Cursor completamente y los agentes tendrán acceso global a:
 - **Cursor IDE**
 - **API Key** de Supermemory.ai (gratuita)
 
-## 🌍 Instalación Local vs Global
-
-### 🔗 **Global (Recomendado)**
-- ✅ Disponible en **todos los proyectos** de Cursor
-- ✅ No necesitas tener el proyecto abierto
-- ✅ Una sola instalación para todo el equipo
-- ⚠️ Requiere enlace simbólico global
-
-### 📁 **Local (Por Proyecto)**
-- ✅ Simple de configurar
-- ✅ Aislado por proyecto
-- ❌ Solo funciona cuando el proyecto está abierto
-- ❌ Necesitas configurar en cada proyecto
-
-**Recomendación:** Usa instalación global para equipos.
 
 ## 💡 Uso con Agentes
 
@@ -108,23 +67,6 @@ Guarda que el endpoint de login es /api/auth/login
 
 **Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se formatean según el idioma configurado (`LANGUAGE`) para mejor identificación en búsquedas del equipo.
 
-## ⚙️ Configuración
-
-1. **Copia el archivo de ejemplo:**
-   ```bash
-   cp .env.example .env
-   ```
-
-2. **Configura las variables:**
-   - `SUPERMEMORY_API_KEY`: Tu API key de Supermemory
-   - `LANGUAGE`: `en` (inglés) o `es` (español)
-   - `DEFAULT_USER_ID`: Tu nombre o identificador
-
-3. **Configura el MCP global (opcional):**
-   ```bash
-   ./setup-env.sh
-   ```
-   Este script lee las variables de tu archivo `.env` y configura el MCP server globalmente en Cursor.
 
 ## ✨ Formateo Automático de Usuario
 
