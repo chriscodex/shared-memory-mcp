@@ -108,6 +108,18 @@ Guarda que el endpoint de login es /api/auth/login
 
 **Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se formatean según el idioma configurado (`LANGUAGE`) para mejor identificación en búsquedas del equipo.
 
+## ⚙️ Configuración
+
+1. **Copia el archivo de ejemplo:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configura las variables:**
+   - `SUPERMEMORY_API_KEY`: Tu API key de Supermemory
+   - `LANGUAGE`: `en` (inglés) o `es` (español)
+   - `DEFAULT_USER_ID`: Tu nombre o identificador
+
 ## ✨ Formateo Automático de Usuario
 
 **Todas las memorias se formatean automáticamente** con atribución clara del usuario:
