@@ -27,7 +27,7 @@ if [ -f ".env" ]; then
     echo "🔑 API Key encontrada: ${SUPERMEMORY_API_KEY:0:20}..."
     echo "🌐 Base URL: ${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}"
     echo "👤 User ID: ${DEFAULT_USER_ID}"
-    echo "🌍 Language: ${LANGUAGE:-es}"
+    echo "🌍 Language: ${LANGUAGE:-en}"
 
     # Actualizar configuración global
     cat > ~/.cursor/mcp.json << EOF
@@ -41,7 +41,7 @@ if [ -f ".env" ]; then
         "SUPERMEMORY_API_KEY": "$SUPERMEMORY_API_KEY",
         "SUPERMEMORY_BASE_URL": "${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}",
         "DEFAULT_USER_ID": "$DEFAULT_USER_ID",
-        "LANGUAGE": "${LANGUAGE:-es}"
+        "LANGUAGE": "${LANGUAGE:-en}"
       }
     }
   }

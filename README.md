@@ -128,8 +128,8 @@ El servidor soporta múltiples idiomas. Para cambiar el idioma:
 
 1. **Configura la variable de entorno:**
    ```bash
-   LANGUAGE=en  # Para inglés
-   LANGUAGE=es  # Para español (default)
+   LANGUAGE=en  # Para inglés (default)
+   LANGUAGE=es  # Para español
    ```
 
 2. **Archivos de traducción:**
@@ -141,7 +141,7 @@ El servidor soporta múltiples idiomas. Para cambiar el idioma:
    - Añade las traducciones necesarias
    - Configura `LANGUAGE=[código]`
 
-**Idiomas soportados:** 🇪🇸 Español, 🇺🇸 Inglés
+**Idiomas soportados:** 🇺🇸 English (default), 🇪🇸 Español
 
 ## 🏗️ Arquitectura
 
