@@ -106,7 +106,7 @@ Almacena esta decisión de arquitectura: microservicios con API Gateway
 Guarda que el endpoint de login es /api/auth/login
 ```
 
-**Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se personalizan para mejor identificación en búsquedas del equipo.
+**Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se formatean según el idioma configurado (`LANGUAGE`) para mejor identificación en búsquedas del equipo.
 
 ## ✨ Formateo Automático de Usuario
 
@@ -121,6 +121,27 @@ Esto asegura que:
 - ✅ Toda la información tenga atribución clara del autor
 - ✅ Las búsquedas incluyan el contexto de quién guardó cada memoria
 - ✅ La trazabilidad del equipo sea perfecta
+
+## 🌍 Internacionalización (i18n)
+
+El servidor soporta múltiples idiomas. Para cambiar el idioma:
+
+1. **Configura la variable de entorno:**
+   ```bash
+   LANGUAGE=en  # Para inglés
+   LANGUAGE=es  # Para español (default)
+   ```
+
+2. **Archivos de traducción:**
+   - `locales/es.json` - Traducciones en español
+   - `locales/en.json` - Traducciones en inglés
+
+3. **Agregar nuevos idiomas:**
+   - Crea `locales/[código].json`
+   - Añade las traducciones necesarias
+   - Configura `LANGUAGE=[código]`
+
+**Idiomas soportados:** 🇪🇸 Español, 🇺🇸 Inglés
 
 ## 🏗️ Arquitectura
 

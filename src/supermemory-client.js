@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
+import i18n from './i18n.js';
 
 // Cargar variables de entorno
 config();
@@ -26,7 +27,7 @@ class SupermemoryClient {
    */
   async searchMemory(query, limit = 5) {
     if (!this.isReady()) {
-      throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
+      throw new Error(i18n.t('api_key_not_configured'));
     }
 
     try {
@@ -50,7 +51,7 @@ class SupermemoryClient {
       const data = await response.json();
       return this.formatSearchResults(data);
     } catch (error) {
-      console.error('Error searching memory:', error);
+      console.error(i18n.t('search_error', { error: error.message }));
       throw error;
     }
   }
@@ -63,7 +64,7 @@ class SupermemoryClient {
    */
   formatUserContent(content, userName) {
     if (!userName) return content;
-    return `El usuario ${userName} ha guardado: ${content}`;
+    return `${i18n.t('user_saved', { user: userName })} ${content}`;
   }
 
   /**
@@ -74,7 +75,7 @@ class SupermemoryClient {
    */
   async storeMemory(content, title, tags = []) {
     if (!this.isReady()) {
-      throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
+      throw new Error(i18n.t('api_key_not_configured'));
     }
 
     try {
@@ -108,7 +109,7 @@ class SupermemoryClient {
       const data = await response.json();
       return this.formatStoreResult(data);
     } catch (error) {
-      console.error('Error storing memory:', error);
+      console.error(i18n.t('storage_error', { error: error.message }));
       throw error;
     }
   }

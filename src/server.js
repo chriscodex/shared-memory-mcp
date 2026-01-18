@@ -6,6 +6,7 @@ import { z } from "zod";
 
 // Import the client
 import SupermemoryClient from './supermemory-client.js';
+import i18n from './i18n.js';
 const supermemory = new SupermemoryClient();
 
 // Create MCP server
@@ -48,7 +49,7 @@ server.tool("team_memory_search",
         content: [
           {
             type: "text",
-            text: `🔍 **Team Memory Search Results**\n\nNo information found for query: "${query}"\n\n💡 **Suggestions:**\n• Try more specific terms (e.g., "JWT authentication" instead of "login")\n• Use broader search terms\n• Check if the information was recently added (may take 1-2 minutes to index)\n\n📚 **Available memory topics:** Try searching for terms like "authentication", "database", "API", "project", "team", "configuration"`
+            text: `🔍 **${i18n.t('search_results')}**\n\n${i18n.t('no_results_details', { query })}`
           }
         ]
       };
@@ -73,8 +74,8 @@ server.tool("team_memory_search",
       ]
     };
   } catch (error) {
-    console.error('Search error:', error);
-    throw new Error(`Error al buscar memoria: ${error.message}`);
+    console.error(i18n.t('search_error', { error: error.message }));
+    throw new Error(i18n.t('search_error', { error: error.message }));
   }
 });
 
@@ -94,16 +95,11 @@ server.tool("team_memory_store",
         content: [
           {
             type: "text",
-            text: `✅ **Team Memory Storage (Demo Mode)**\n\n` +
-                  `📝 **${title}**\n` +
-                  `📄 ${content}\n` +
-                  `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
-                  `🆔 Demo ID: ${memoryId}\n\n` +
-                  `⚠️ **Demo Mode:** This information was NOT permanently stored.\n\n` +
-                  `🔧 **To enable real storage:**\n` +
-                  `• Get API key from https://supermemory.ai\n` +
-                  `• Set SUPERMEMORY_API_KEY in environment\n` +
-                  `• Content will be automatically formatted with user attribution for team memory!`
+            text: i18n.t('memory_stored_demo', {
+              title,
+              content,
+              id: memoryId
+            })
           }
         ]
       };
@@ -116,20 +112,18 @@ server.tool("team_memory_store",
       content: [
         {
           type: "text",
-          text: `✅ **Team Memory Stored Successfully!**\n\n` +
-                `📝 **${title}**\n` +
-                `📄 ${content}\n` +
-                `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
-                `👤 Stored in team memory\n` +
-                `🆔 Memory ID: ${result.id}\n\n` +
-                `💡 **Note:** Content was automatically formatted with user attribution for team memory. This information will be searchable by team members in 1-2 minutes after processing.\n` +
-                `🔍 **Search suggestions:** ${tags.length > 0 ? tags.slice(0, 3).join(", ") : title.split(" ").slice(0, 3).join(", ")}`
+          text: i18n.t('memory_stored_success', {
+            title,
+            content,
+            id: result.id,
+            suggestions: tags.length > 0 ? tags.slice(0, 3).join(", ") : title.split(" ").slice(0, 3).join(", ")
+          })
         }
       ]
     };
   } catch (error) {
-    console.error('Storage error:', error);
-    throw new Error(`Error al almacenar memoria: ${error.message}`);
+    console.error(i18n.t('storage_error', { error: error.message }));
+    throw new Error(i18n.t('storage_error', { error: error.message }));
   }
 });
 
