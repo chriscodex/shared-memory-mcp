@@ -1,35 +1,35 @@
 #!/bin/bash
 
-echo "🔧 Configurando Variables de Entorno Globales"
-echo "============================================="
+echo "🔧 Configuring Global Environment Variables"
+echo "==========================================="
 
-# Verificar si existe .env en el directorio actual
+# Check if .env exists in current directory
 if [ -f ".env" ]; then
-    echo "✅ Archivo .env encontrado"
+    echo "✅ .env file found"
 
-    # Leer variables del .env
+    # Read variables from .env
     SUPERMEMORY_API_KEY=$(grep "SUPERMEMORY_API_KEY" .env | cut -d'=' -f2)
     SUPERMEMORY_BASE_URL=$(grep "SUPERMEMORY_BASE_URL" .env | cut -d'=' -f2)
     DEFAULT_USER_ID=$(grep "DEFAULT_USER_ID" .env | cut -d'=' -f2)
     LANGUAGE=$(grep "^LANGUAGE" .env | cut -d'=' -f2)
 
     if [ -z "$SUPERMEMORY_API_KEY" ]; then
-        echo "❌ SUPERMEMORY_API_KEY no encontrada en .env"
-        echo "Por favor configura tu API key primero"
+        echo "❌ SUPERMEMORY_API_KEY not found in .env"
+        echo "Please configure your API key first"
         exit 1
     fi
 
     if [ -z "$DEFAULT_USER_ID" ]; then
-        echo "⚠️  DEFAULT_USER_ID no encontrada, usando 'user' por defecto"
+        echo "⚠️  DEFAULT_USER_ID not found, using 'user' as default"
         DEFAULT_USER_ID="user"
     fi
 
-    echo "🔑 API Key encontrada: ${SUPERMEMORY_API_KEY:0:20}..."
+    echo "🔑 API Key found: ${SUPERMEMORY_API_KEY:0:20}..."
     echo "🌐 Base URL: ${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}"
     echo "👤 User ID: ${DEFAULT_USER_ID}"
     echo "🌍 Language: ${LANGUAGE:-en}"
 
-    # Actualizar configuración global
+    # Update global configuration
     cat > ~/.cursor/mcp.json << EOF
 {
   "mcpServers": {
@@ -48,14 +48,14 @@ if [ -f ".env" ]; then
 }
 EOF
 
-    echo "✅ Configuración global actualizada!"
+    echo "✅ Global configuration updated!"
     echo ""
-    echo "📋 Próximos pasos:"
-    echo "1. Reinicia Cursor completamente"
-    echo "2. El MCP funcionará con almacenamiento permanente"
+    echo "📋 Next steps:"
+    echo "1. Completely restart Cursor"
+    echo "2. MCP will work with permanent storage"
 
 else
-    echo "❌ Archivo .env no encontrado"
-    echo "Ejecuta este script desde el directorio del proyecto mcp-team-memory"
+    echo "❌ .env file not found"
+    echo "Run this script from the shared-memory-mcp project directory"
     exit 1
 fi

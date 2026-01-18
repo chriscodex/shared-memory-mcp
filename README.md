@@ -2,127 +2,125 @@
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 
-**Memoria persistente y compartida para equipos e individuos usando Cursor + Supermemory.ai**
+**Persistent and shared memory for teams and individuals using Cursor + Supermemory.ai**
 
-Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto de forma persistente desde cualquier proyecto o conversación.
+Allows Cursor agents to store and retrieve knowledge, decisions, and context persistently from any project or conversation.
 
-## 🎯 Casos de Uso
+## 🎯 Use Cases
 
-### 👥 **Para Equipos**
-- **Memoria compartida del equipo** across todos los proyectos
-- **Conocimientos persistentes** que sobreviven a reinicios de Cursor
-- **Colaboración mejorada** entre miembros del equipo
-- **Contexto consistente** en todos los proyectos
+### 👥 **For Teams**
+- **Shared team memory** across all projects
+- **Persistent knowledge** that survives Cursor restarts
+- **Enhanced collaboration** between team members
+- **Consistent context** across all projects
 
-### 👤 **Para Individuos**
-- **Memoria entre agentes**: Un agente guarda, otro agente puede buscar
-- **Contexto persistente**: Naturalmente Cursor no comparte memoria entre chats/agentes
-- **Continuidad**: Mantén el contexto entre diferentes sesiones de trabajo
-- **Productividad personal**: Accede a información desde cualquier chat de Cursor
+### 👤 **For Individuals**
+- **Cross-agent memory**: One agent saves, another agent can search
+- **Persistent context**: Naturally Cursor doesn't share memory between chats/agents
+- **Continuity**: Maintain context between different work sessions
+- **Personal productivity**: Access information from any Cursor chat
 
-## 🚀 Instalación Global
+## 🚀 Global Installation
 
 ```bash
-# Desde la raíz del proyecto
+# From the project root
 ./install-global.sh
 ```
 
-Este script instala el MCP globalmente y configura todo automáticamente.
+This script installs the MCP globally and configures everything automatically.
 
-### Configuración
+### Configuration
 ```bash
-# Copiar archivo de ejemplo
+# Copy example file
 cp .env.example .env
 
-# Configura tus variables:
-# - SUPERMEMORY_API_KEY: Tu API key de Supermemory
-# - LANGUAGE: en (inglés) o es (español)
-# - DEFAULT_USER_ID: Tu nombre
+# Configure your variables:
+# - SUPERMEMORY_API_KEY: Your Supermemory API key
+# - LANGUAGE: en (English) or es (Spanish)
+# - DEFAULT_USER_ID: Your name
 
-# Aplicar configuración global
+# Apply global configuration
 ./setup-env.sh
 ```
 
-### Obtener API Key
-1. Ve a [Supermemory.ai](https://supermemory.ai/)
-2. Regístrate y obtén tu API key gratuita
-3. Pégala en `SUPERMEMORY_API_KEY`
+### Get API Key
+1. Go to [Supermemory.ai](https://supermemory.ai/)
+2. Sign up and get your free API key
+3. Paste it in `SUPERMEMORY_API_KEY`
 
-### ¡Listo! ✅
-Reinicia Cursor y tendrás memoria de equipo en todos tus proyectos:
-- `memory/team_memory_search` 🔍 - Buscar información del equipo
-- `memory/team_memory_store` 💾 - Guardar información automáticamente
+### Ready! ✅
+Restart Cursor and you'll have team memory in all your projects:
+- `memory/team_memory_search` 🔍 - Search team information
+- `memory/team_memory_store` 💾 - Save information automatically
 
-**¿Por qué global?** La memoria del equipo debe ser consistente across todos los proyectos donde trabajes.
+**Why global?** Team memory should be consistent across all projects where you work.
 
-> **Nota:** La instalación local por proyecto no es recomendable ya que fragmentaría la memoria del equipo y requeriría configuración duplicada en cada repositorio.
+> **Note:** Local per-project installation is not recommended as it would fragment team memory and require duplicate configuration in each repository.
 
-## 📋 Requisitos
+## 📋 Requirements
 
 - **Node.js** >= 18.0.0
 - **Cursor IDE**
-- **API Key** de Supermemory.ai (gratuita)
+- **API Key** from Supermemory.ai (free)
 
 
-## 💡 Uso con Agentes
+## 💡 Usage with Agents
 
-### 🔍 Buscar información
-Usa las frases: **"busca en la memoria"** o **"busca en la memoria del equipo"**
-
-```
-Busca en la memoria sobre "autenticación JWT"
-Busca en la memoria del equipo sobre configuración de base de datos
-¿Hay información guardada sobre Docker en la memoria?
-```
-
-### 💾 Guardar información
-Usa las frases: **"guarda en la memoria"** o **"guarda en la memoria del equipo"**
+### 🔍 Search information
+Use phrases: **"search in memory"** or **"search in team memory"**
 
 ```
-Guarda en la memoria que usamos PostgreSQL como base de datos principal
-Guarda en la memoria del equipo esta decisión: microservicios con API Gateway
-Guarda en la memoria que el endpoint de login es /api/auth/login
+Search in memory about "JWT authentication"
+Search in team memory about database configuration
+Is there information saved about Docker in memory?
 ```
 
-**Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se formatean según el idioma configurado (`LANGUAGE`) para mejor identificación en búsquedas del equipo.
-
-
-## ✨ Formateo Automático de Usuario
-
-**Todas las memorias se formatean automáticamente** con atribución clara del usuario:
+### 💾 Save information
+Use phrases: **"save in memory"** or **"save in team memory"**
 
 ```
-"Guarda que me gusta viajar"
-→ Se guarda como: "Preferencias - El usuario Chris ha guardado: me gusta viajar"
+Save in memory that we use PostgreSQL as main database
+Save in team memory this decision: microservices with API Gateway
+Save in memory that the login endpoint is /api/auth/login
 ```
 
-Esto asegura que:
-- ✅ Toda la información tenga atribución clara del autor
-- ✅ Las búsquedas incluyan el contexto de quién guardó cada memoria
-- ✅ La trazabilidad del equipo sea perfecta
+**Note:** All memories are automatically saved with your name (`DEFAULT_USER_ID`) and formatted according to the configured language (`LANGUAGE`) for better identification in team searches.
 
-## 🌍 Internacionalización (i18n)
 
-El servidor soporta múltiples idiomas. Para cambiar el idioma:
+## ✨ Automatic User Formatting
 
-1. **Configura la variable de entorno:**
+**All memories are automatically formatted** with clear user attribution:
+
+```
+"Save that I like to travel"
+→ Saved as: "Preferences - User Chris saved: I like to travel"
+```
+
+This ensures that:
+- ✅ All information has clear author attribution
+- ✅ Searches include context about who saved each memory
+- ✅ Team traceability is perfect
+
+## 🌍 Internationalization (i18n)
+
+The server supports multiple languages. To change the language:
+
+1. **Configure the environment variable:**
    ```bash
-   LANGUAGE=en  # Para inglés (default)
-   LANGUAGE=es  # Para español
+   LANGUAGE=en  # For English (default)
    ```
 
-2. **Archivos de traducción:**
-   - `locales/es.json` - Traducciones en español
-   - `locales/en.json` - Traducciones en inglés
+2. **Translation files:**
+   - `locales/en.json` - English translations
 
-3. **Agregar nuevos idiomas:**
-   - Crea `locales/[código].json`
-   - Añade las traducciones necesarias
-   - Configura `LANGUAGE=[código]`
+3. **Adding new languages:**
+   - Create `locales/[code].json`
+   - Add necessary translations
+   - Configure `LANGUAGE=[code]`
 
-**Idiomas soportados:** 🇺🇸 English (default), 🇪🇸 Español
+**Supported languages:** 🇺🇸 English (default)
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture
 
 ```
 ┌─────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -131,38 +129,38 @@ El servidor soporta múltiples idiomas. Para cambiar el idioma:
 └─────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-- **Cursor Agent**: Interface de usuario
-- **MCP Server**: Protocolo de comunicación
-- **Supermemory.ai**: Almacenamiento persistente
+- **Cursor Agent**: User interface
+- **MCP Server**: Communication protocol
+- **Supermemory.ai**: Persistent storage
 
-## 🔧 Desarrollo
+## 🔧 Development
 
-### Ejecutar en desarrollo
+### Run in development
 ```bash
-npm run dev  # Con hot reload
+npm run dev  # With hot reload
 ```
 
-### Construir para producción
+### Build for production
 ```bash
 npm run start
 ```
 
-## 🐛 Solución de Problemas
+## 🐛 Troubleshooting
 
-### "No se encontraron servidores MCP"
-- Reinicia Cursor completamente
-- Verifica que `~/.cursor/mcp.json` existe
+### "No MCP servers found"
+- Completely restart Cursor
+- Verify that `~/.cursor/mcp.json` exists
 
 ### "API key not configured"
-- Verifica que `SUPERMEMORY_API_KEY` tenga un valor real en `.env`
+- Verify that `SUPERMEMORY_API_KEY` has a real value in `.env`
 
-### Modo simulado activo
-- Configura la API key correctamente y ejecuta `./setup-env.sh`
+### Simulation mode active
+- Configure the API key correctly and run `./setup-env.sh`
 
-## 📄 Licencia
+## 📄 License
 
-MIT - Ver [LICENSE](LICENSE) para más detalles.
+MIT - See [LICENSE](LICENSE) for more details.
 
 ---
 
-**¿Preguntas?** Abre un issue en GitHub.
+**Questions?** Open an issue on GitHub.

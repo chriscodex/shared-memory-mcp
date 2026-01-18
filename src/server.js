@@ -89,7 +89,7 @@ server.tool("team_memory_store",
   }, async ({ content, title, tags = [] }) => {
   try {
     if (!supermemory.isReady()) {
-      // Modo simulado cuando no hay API key
+      // Simulation mode when no API key
       const memoryId = `demo_${Date.now()}`;
 
       return {
@@ -106,7 +106,7 @@ server.tool("team_memory_store",
       };
     }
 
-    // Almacenamiento real con Supermemory API
+    // Real storage with Supermemory API
     const result = await supermemory.storeMemory(content, title, tags);
 
     return {

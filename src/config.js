@@ -1,8 +1,8 @@
-// Cargar variables de entorno primero
+// Load environment variables first
 import { config } from 'dotenv';
 config();
 
-// Exportar configuración
+// Export configuration
 export const env = {
   supermemoryApiKey: process.env.SUPERMEMORY_API_KEY,
   baseUrl: process.env.SUPERMEMORY_BASE_URL || 'https://api.supermemory.ai/v4',

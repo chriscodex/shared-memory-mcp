@@ -1,32 +1,32 @@
 #!/bin/bash
 
-echo "🚀 Instalando Team Memory MCP Server Globalmente"
-echo "================================================="
+echo "🚀 Installing Team Memory MCP Server Globally"
+echo "============================================="
 
-# Verificar que estamos en el directorio correcto
+# Verify we're in the correct directory
 if [ ! -f "src/server.js" ]; then
-    echo "❌ Error: Ejecuta este script desde la raíz del proyecto mcp-team-memory"
+    echo "❌ Error: Run this script from the shared-memory-mcp project root"
     exit 1
 fi
 
-# Verificar Node.js
+# Verify Node.js
 if ! command -v node &> /dev/null; then
-    echo "❌ Error: Node.js no está instalado"
+    echo "❌ Error: Node.js is not installed"
     exit 1
 fi
 
-echo "📦 Instalando dependencias..."
+echo "📦 Installing dependencies..."
 npm install
 
-echo "🔧 Creando enlace simbólico global..."
+echo "🔧 Creating global symlink..."
 npm link
 
-echo "⚙️  Configurando MCP global..."
+echo "⚙️  Configuring global MCP..."
 
-# Crear directorio global si no existe
+# Create global directory if it doesn't exist
 mkdir -p ~/.cursor
 
-# Configuración global
+# Global configuration
 cat > ~/.cursor/mcp.json << 'EOF'
 {
   "mcpServers": {
@@ -41,19 +41,19 @@ cat > ~/.cursor/mcp.json << 'EOF'
 }
 EOF
 
-echo "🔑 Verificando configuración de API key..."
+echo "🔑 Verifying API key configuration..."
 if [ ! -f ".env" ]; then
-    echo "⚠️  Archivo .env no encontrado. Copiando ejemplo..."
+    echo "⚠️  .env file not found. Copying example..."
     cp .env.example .env
-    echo "✏️  Edita el archivo .env con tu API key de Supermemory.ai"
+    echo "✏️  Edit the .env file with your Supermemory.ai API key"
 fi
 
 echo ""
-echo "✅ Instalación completada!"
+echo "✅ Installation completed!"
 echo ""
-echo "📋 Próximos pasos:"
-echo "1. Edita ~/.cursor/mcp.json si necesitas variables de entorno personalizadas"
-echo "2. Configura SUPERMEMORY_API_KEY en tu .env"
-echo "3. Reinicia Cursor completamente"
+echo "📋 Next steps:"
+echo "1. Edit ~/.cursor/mcp.json if you need custom environment variables"
+echo "2. Configure SUPERMEMORY_API_KEY in your .env"
+echo "3. Completely restart Cursor"
 echo ""
-echo "🎯 El MCP estará disponible globalmente en todos tus proyectos de Cursor"
+echo "🎯 MCP will be available globally across all your Cursor projects"

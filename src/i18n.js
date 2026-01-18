@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 class I18n {
   constructor() {
-    this.language = env.language; // Use centralized config
+    this.language = env.language || 'en'; // Use centralized config, default to English
     this.translations = {};
     this.loadTranslations();
   }
@@ -19,44 +19,36 @@ class I18n {
     try {
       // Check if locales directory exists
       if (!fs.existsSync(localesPath)) {
-        console.warn('Locales directory not found, using default Spanish translations');
-        this.translations = this.getDefaultSpanishTranslations();
+        console.warn('Locales directory not found, using default English translations');
+        this.translations = this.getDefaultEnglishTranslations();
         return;
       }
 
-      const files = fs.readdirSync(localesPath);
-      files.forEach(file => {
-        if (file.endsWith('.json')) {
-          const lang = file.replace('.json', '');
-          const filePath = path.join(localesPath, file);
-
-          try {
-            this.translations[lang] = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-          } catch (error) {
-            console.warn(`Error loading translation file ${file}:`, error.message);
-          }
-        }
-      });
-
-      // Fallback to Spanish if current language not found
-      if (!this.translations[this.language]) {
-        console.warn(`Language '${this.language}' not found, falling back to Spanish`);
-        this.language = 'es';
+      // Load English translations (only supported language)
+      const enFilePath = path.join(localesPath, 'en.json');
+      if (fs.existsSync(enFilePath)) {
+        this.translations.en = JSON.parse(fs.readFileSync(enFilePath, 'utf8'));
+      } else {
+        console.warn('English translation file not found, using defaults');
+        this.translations = this.getDefaultEnglishTranslations();
       }
+
+      // Force language to English
+      this.language = 'en';
 
     } catch (error) {
       console.warn('Error loading translations, using defaults:', error.message);
-      this.translations = this.getDefaultSpanishTranslations();
+      this.translations = this.getDefaultEnglishTranslations();
     }
   }
 
-  getDefaultSpanishTranslations() {
+  getDefaultEnglishTranslations() {
     return {
-      es: {
-        "user_saved": "El usuario {user} ha guardado:",
-        "search_results": "Resultados de búsqueda",
-        "no_results": "No se encontraron resultados",
-        "api_key_not_configured": "Clave API de Supermemory no configurada."
+      en: {
+        "user_saved": "User {user} saved:",
+        "search_results": "Search Results",
+        "no_results": "No results found",
+        "api_key_not_configured": "Supermemory API key not configured."
       }
     };
   }

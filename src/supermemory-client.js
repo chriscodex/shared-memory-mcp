@@ -11,16 +11,16 @@ class SupermemoryClient {
   }
 
   /**
-   * Verifica si el cliente está configurado correctamente
+   * Checks if the client is configured correctly
    */
   isReady() {
     return this.isConfigured;
   }
 
   /**
-   * Busca en la memoria del equipo
-   * @param {string} query - La consulta de búsqueda
-   * @param {number} limit - Número máximo de resultados (default: 5)
+   * Searches team memory
+   * @param {string} query - The search query
+   * @param {number} limit - Maximum number of results (default: 5)
    */
   async searchMemory(query, limit = 5) {
     if (!this.isReady()) {
@@ -54,10 +54,10 @@ class SupermemoryClient {
   }
 
   /**
-   * Formatea el contenido agregando información del usuario que lo guarda
-   * @param {string} content - Contenido original
-   * @param {string} userName - Nombre del usuario
-   * @returns {string} Contenido formateado
+   * Formats content by adding information about the user saving it
+   * @param {string} content - Original content
+   * @param {string} userName - User name
+   * @returns {string} Formatted content
    */
   formatUserContent(content, userName) {
     if (!userName) return content;
@@ -65,10 +65,10 @@ class SupermemoryClient {
   }
 
   /**
-   * Almacena información en la memoria del equipo
-   * @param {string} content - El contenido a almacenar
-   * @param {string} title - Título descriptivo
-   * @param {string[]} tags - Tags para categorización
+   * Stores information in team memory
+   * @param {string} content - The content to store
+   * @param {string} title - Descriptive title
+   * @param {string[]} tags - Tags for categorization
    */
   async storeMemory(content, title, tags = []) {
     if (!this.isReady()) {
@@ -76,7 +76,7 @@ class SupermemoryClient {
     }
 
     try {
-      // Formatear el contenido con información del usuario
+      // Format content with user information
       const formattedContent = this.formatUserContent(content, this.defaultUserId);
 
       const conversationData = {
@@ -112,7 +112,7 @@ class SupermemoryClient {
   }
 
   /**
-   * Formatea los resultados de búsqueda para el formato MCP
+   * Formats search results for MCP format
    */
   formatSearchResults(apiResponse) {
     const results = apiResponse.results || [];
@@ -120,7 +120,7 @@ class SupermemoryClient {
     return results.map(result => ({
       id: result.id || `mem_${Date.now()}`,
       content: result.memory || result.chunk || '',
-      title: result.metadata?.title || 'Sin título',
+      title: result.metadata?.title || 'Untitled',
       score: result.similarity || result.score || 0,
       tags: result.metadata?.tags || [],
       created_at: result.updatedAt || new Date().toISOString()
@@ -128,7 +128,7 @@ class SupermemoryClient {
   }
 
   /**
-   * Formatea el resultado de almacenamiento para el formato MCP
+   * Formats storage result for MCP format
    */
   formatStoreResult(apiResponse) {
     return {
@@ -139,7 +139,7 @@ class SupermemoryClient {
   }
 
   /**
-   * Obtiene estadísticas de uso de la API
+   * Gets API usage statistics
    */
   async getUsageStats() {
     if (!this.isReady()) {
@@ -147,10 +147,10 @@ class SupermemoryClient {
     }
 
     try {
-      // Implementar cuando la API lo soporte
+      // Implement when API supports it
       return {
         configured: true,
-        // Agregar estadísticas reales cuando estén disponibles
+        // Add real statistics when available
       };
     } catch (error) {
       console.error('Error getting usage stats:', error);
