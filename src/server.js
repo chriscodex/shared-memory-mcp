@@ -7,6 +7,7 @@ import { z } from "zod";
 // Import the client
 import SupermemoryClient from './supermemory-client.js';
 import i18n from './i18n.js';
+import { env } from './config.js';
 const supermemory = new SupermemoryClient();
 
 // Create MCP server

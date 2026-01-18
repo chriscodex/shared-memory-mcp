@@ -1,15 +1,12 @@
 import fetch from 'node-fetch';
-import { config } from 'dotenv';
 import i18n from './i18n.js';
-
-// Cargar variables de entorno
-config();
+import { env } from './config.js';
 
 class SupermemoryClient {
   constructor() {
-    this.apiKey = process.env.SUPERMEMORY_API_KEY;
-    this.baseUrl = process.env.SUPERMEMORY_BASE_URL || 'https://api.supermemory.ai/v4';
-    this.defaultUserId = process.env.DEFAULT_USER_ID || 'user';
+    this.apiKey = env.supermemoryApiKey;
+    this.baseUrl = env.baseUrl;
+    this.defaultUserId = env.defaultUserId;
     this.isConfigured = Boolean(this.apiKey);
   }
 

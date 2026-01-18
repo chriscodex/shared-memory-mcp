@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { env } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class I18n {
   constructor() {
-    this.language = process.env.LANGUAGE || 'es'; // Default to Spanish
+    this.language = env.language; // Use centralized config
     this.translations = {};
     this.loadTranslations();
   }
