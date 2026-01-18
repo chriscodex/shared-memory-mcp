@@ -2,9 +2,9 @@
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 
-**Memoria compartida global para equipos usando Cursor + Supermemory.ai**
+**Memoria persistente y compartida para equipos e individuos usando Cursor + Supermemory.ai**
 
-Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto del proyecto de forma persistente desde cualquier proyecto.
+Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto de forma persistente desde cualquier proyecto o conversación.
 
 ## 🎯 Casos de Uso
 
