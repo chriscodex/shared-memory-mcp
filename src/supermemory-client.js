@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import i18n from './i18n.js';
 import { env } from './config.js';
+import i18n from './i18n.js';
 
 class SupermemoryClient {
   constructor() {
