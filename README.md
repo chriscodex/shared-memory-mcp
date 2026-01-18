@@ -63,11 +63,33 @@ DEFAULT_USER_ID=tu-nombre
 Reinicia Cursor completamente y los agentes tendrán acceso global a:
 - `memory/team_memory_search` 🔍 - Buscar información
 - `memory/team_memory_store` 💾 - Guardar información
+- `memory/user_profile_get` 👤 - Consultar perfiles de usuario
+- `memory/user_memory_store` 👤💾 - Guardar información personal
 
 **Estado:** ✅ Instalación global probada y funcionando
 **API:** ✅ Variables de entorno configuradas correctamente
 
 > **Nota:** Si ves mensajes de "modo demo", ejecuta `./setup-env.sh` para configurar las variables globales.
+
+### 💡 **Ejemplos de Uso**
+
+```bash
+# Guardar información personal
+"Guarda que me gusta viajar y la comida peruana"
+
+# Consultar preferencias de un usuario
+"¿Cuáles son las preferencias de Chris?"
+
+# Buscar información específica
+"¿Qué lenguajes de programación prefiere Chris?"
+```
+
+### 🔄 **Flujo de Trabajo**
+
+1. **Guardar información personal** → Se personaliza automáticamente con tu nombre
+2. **Supermemory construye perfil** → Extrae preferencias y hechos
+3. **Consultar perfiles** → Obtén información estructurada sobre cualquier usuario
+4. **Búsqueda inteligente** → Encuentra información por contenido o autor
 
 ## 📋 Requisitos
 
@@ -106,7 +128,30 @@ Almacena esta decisión de arquitectura: microservicios con API Gateway
 Guarda que el endpoint de login es /api/auth/login
 ```
 
-**Nota:** Todas las memorias se guardan con el tag del equipo definido en `DEFAULT_USER_ID` del archivo `.env`.
+**Nota:** Todas las memorias se guardan con el tag del usuario definido en `DEFAULT_USER_ID` del archivo `.env`, incluyendo metadatos del autor para identificación.
+
+## 👤 Metadatos del Autor y Personalización
+
+### ✨ **Personalización Automática de Contenido**
+
+Cuando guardas información personal, el sistema automáticamente **reemplaza términos genéricos** con tu nombre específico:
+
+- `"Al usuario le gusta viajar"` → `"A Chris le gusta viajar"`
+- `"Me gusta la comida peruana"` → `"A Chris le gusta la comida peruana"`
+- `"Yo prefiero trabajar de noche"` → `"Chris prefiere trabajar de noche"`
+
+### 🏷️ **Metadatos del Autor**
+
+Cada memoria guardada incluye automáticamente:
+- **Tag principal:** `DEFAULT_USER_ID` (tu nombre)
+- **Metadatos:** `author`, `author_name`, `created_by`
+- **Fuente:** `mcp-team-memory`
+
+Esto permite:
+- ✅ Identificar quién guardó cada memoria
+- ✅ Filtrar búsquedas por autor
+- ✅ Construir perfiles de usuario inteligentes
+- ✅ Consultar preferencias específicas: `"¿Cuáles son las preferencias de Chris?"`
 
 ## 🏗️ Arquitectura
 
