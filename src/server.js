@@ -103,7 +103,7 @@ server.tool("team_memory_store",
                   `🔧 **To enable real storage:**\n` +
                   `• Get API key from https://supermemory.ai\n` +
                   `• Set SUPERMEMORY_API_KEY in environment\n` +
-                  `• Content will be automatically personalized with your name for team memory!`
+                  `• Content will be automatically formatted with user attribution for team memory!`
           }
         ]
       };
@@ -122,7 +122,7 @@ server.tool("team_memory_store",
                 `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
                 `👤 Stored in team memory\n` +
                 `🆔 Memory ID: ${result.id}\n\n` +
-                `💡 **Note:** Content was automatically personalized with your name (${supermemory.defaultUserId}) for better team memory. This information will be searchable by team members in 1-2 minutes after processing.\n` +
+                `💡 **Note:** Content was automatically formatted with user attribution for team memory. This information will be searchable by team members in 1-2 minutes after processing.\n` +
                 `🔍 **Search suggestions:** ${tags.length > 0 ? tags.slice(0, 3).join(", ") : title.split(" ").slice(0, 3).join(", ")}`
         }
       ]

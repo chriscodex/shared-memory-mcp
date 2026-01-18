@@ -108,18 +108,19 @@ Guarda que el endpoint de login es /api/auth/login
 
 **Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se personalizan para mejor identificación en búsquedas del equipo.
 
-## ✨ Personalización Automática
+## ✨ Formateo Automático de Usuario
 
-**Todas las memorias se personalizan automáticamente** con tu nombre configurado en `DEFAULT_USER_ID`:
+**Todas las memorias se formatean automáticamente** con atribución clara del usuario:
 
-- `"Me gusta viajar"` → `"A Chris le gusta viajar"`
-- `"Yo prefiero trabajar de noche"` → `"Chris prefiere trabajar de noche"`
-- `"I love programming"` → `"Chris loves programming"`
+```
+"Guarda que me gusta viajar"
+→ Se guarda como: "Preferencias: Yo, el usuario Chris guardo: me gusta viajar"
+```
 
 Esto asegura que:
-- ✅ Las búsquedas por nombre funcionen correctamente
-- ✅ Los agentes puedan encontrar información específica de cada usuario
-- ✅ La memoria del equipo esté correctamente atribuida
+- ✅ Toda la información tenga atribución clara del autor
+- ✅ Las búsquedas incluyan el contexto de quién guardó cada memoria
+- ✅ La trazabilidad del equipo sea perfecta
 
 ## 🏗️ Arquitectura
 
