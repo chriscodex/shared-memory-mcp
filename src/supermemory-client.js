@@ -8,6 +8,7 @@ class SupermemoryClient {
   constructor() {
     this.apiKey = process.env.SUPERMEMORY_API_KEY;
     this.baseUrl = process.env.SUPERMEMORY_BASE_URL || 'https://api.supermemory.ai/v4';
+    this.defaultUserId = process.env.DEFAULT_USER_ID || 'user';
     this.isConfigured = Boolean(this.apiKey);
   }
 
@@ -21,10 +22,9 @@ class SupermemoryClient {
   /**
    * Busca en la memoria del equipo
    * @param {string} query - La consulta de búsqueda
-   * @param {string} userId - ID del usuario (default: 'team')
    * @param {number} limit - Número máximo de resultados (default: 5)
    */
-  async searchMemory(query, userId = 'team', limit = 5) {
+  async searchMemory(query, limit = 5) {
     if (!this.isReady()) {
       throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
     }
@@ -38,7 +38,7 @@ class SupermemoryClient {
         },
         body: JSON.stringify({
           q: query,
-          containerTag: userId,
+          containerTag: this.defaultUserId,
           limit,
         }),
       });
@@ -60,9 +60,8 @@ class SupermemoryClient {
    * @param {string} content - El contenido a almacenar
    * @param {string} title - Título descriptivo
    * @param {string[]} tags - Tags para categorización
-   * @param {string} userId - ID del usuario que crea la memoria
    */
-  async storeMemory(content, title, tags = [], userId = null) {
+  async storeMemory(content, title, tags = []) {
     if (!this.isReady()) {
       throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
     }
@@ -76,7 +75,7 @@ class SupermemoryClient {
             content: `${title}: ${content}`,
           }
         ],
-        containerTags: [userId || 'team']
+        containerTags: [this.defaultUserId]
       };
 
       const response = await fetch(`${this.baseUrl}/conversations`, {

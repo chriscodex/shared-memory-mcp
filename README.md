@@ -39,13 +39,14 @@ cat > ~/.cursor/mcp.json << 'EOF'
 EOF
 ```
 
-### Configurar API Key y Variables
+### Configurar API Key y Usuario
 ```bash
 # Copiar archivo de ejemplo
 cp .env.example .env
 
-# Editar .env con tu API key de Supermemory.ai
-# SUPERMEMORY_API_KEY=tu_api_key_aqui
+# Editar .env (2 variables requeridas)
+SUPERMEMORY_API_KEY=tu_api_key_real_aqui
+DEFAULT_USER_ID=tu-nombre
 
 # Configurar variables globales
 ./setup-env.sh
@@ -54,8 +55,9 @@ cp .env.example .env
 ### Obtener API Key
 1. Ve a [Supermemory.ai](https://supermemory.ai/)
 2. Regístrate y obtén tu API key gratuita
-3. Pégala en el archivo `.env`
-4. Ejecuta `./setup-env.sh` para configurar globalmente
+3. Pégala en `SUPERMEMORY_API_KEY`
+4. Pon tu nombre en `DEFAULT_USER_ID`
+5. Ejecuta `./setup-env.sh`
 
 ### ¡Listo! ✅
 Reinicia Cursor completamente y los agentes tendrán acceso global a:
@@ -104,6 +106,8 @@ Almacena esta decisión de arquitectura: microservicios con API Gateway
 Guarda que el endpoint de login es /api/auth/login
 ```
 
+**Nota:** Todas las memorias se guardan con el tag del equipo definido en `DEFAULT_USER_ID` del archivo `.env`.
+
 ## 🏗️ Arquitectura
 
 ```
@@ -133,15 +137,13 @@ npm run start
 
 ### "No se encontraron servidores MCP"
 - Reinicia Cursor completamente
-- Verifica que `.cursor/mcp.json` existe
+- Verifica que `~/.cursor/mcp.json` existe
 
 ### "API key not configured"
-- Verifica que el archivo `.env` existe
-- Confirma que `SUPERMEMORY_API_KEY` está configurada
+- Verifica que `SUPERMEMORY_API_KEY` tenga un valor real en `.env`
 
 ### Modo simulado activo
-- Sin API key funciona en modo demo
-- Los datos no se almacenan permanentemente
+- Configura la API key correctamente y ejecuta `./setup-env.sh`
 
 ## 📄 Licencia
 

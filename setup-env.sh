@@ -10,6 +10,7 @@ if [ -f ".env" ]; then
     # Leer variables del .env
     SUPERMEMORY_API_KEY=$(grep "SUPERMEMORY_API_KEY" .env | cut -d'=' -f2)
     SUPERMEMORY_BASE_URL=$(grep "SUPERMEMORY_BASE_URL" .env | cut -d'=' -f2)
+    DEFAULT_USER_ID=$(grep "DEFAULT_USER_ID" .env | cut -d'=' -f2)
 
     if [ -z "$SUPERMEMORY_API_KEY" ]; then
         echo "❌ SUPERMEMORY_API_KEY no encontrada en .env"
@@ -17,8 +18,14 @@ if [ -f ".env" ]; then
         exit 1
     fi
 
+    if [ -z "$DEFAULT_USER_ID" ]; then
+        echo "⚠️  DEFAULT_USER_ID no encontrada, usando 'user' por defecto"
+        DEFAULT_USER_ID="user"
+    fi
+
     echo "🔑 API Key encontrada: ${SUPERMEMORY_API_KEY:0:20}..."
     echo "🌐 Base URL: ${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}"
+    echo "👤 User ID: ${DEFAULT_USER_ID}"
 
     # Actualizar configuración global
     cat > ~/.cursor/mcp.json << EOF
@@ -30,7 +37,8 @@ if [ -f ".env" ]; then
       "env": {
         "NODE_ENV": "production",
         "SUPERMEMORY_API_KEY": "$SUPERMEMORY_API_KEY",
-        "SUPERMEMORY_BASE_URL": "${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}"
+        "SUPERMEMORY_BASE_URL": "${SUPERMEMORY_BASE_URL:-https://api.supermemory.ai/v4}",
+        "DEFAULT_USER_ID": "$DEFAULT_USER_ID"
       }
     }
   }
