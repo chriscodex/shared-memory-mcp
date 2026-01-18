@@ -1,16 +1,16 @@
 {
-  "name": "mcp-supermemory",
+  "name": "shared-memory-mcp",
   "version": "1.0.0",
-  "description": "Team Memory MCP Server - Share knowledge, code, and context between Cursor agents using Supermemory.ai. Enables persistent team memory for better collaboration.",
+  "description": "Shared Memory MCP Server - Share knowledge, code, and context between Cursor agents using Supermemory.ai. Enables persistent memory for teams and individuals.",
   "type": "module",
   "main": "src/server.js",
   "bin": {
-    "team-memory-mcp": "src/server.js"
+    "shared-memory-mcp": "src/server.js"
   },
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test-global": "team-memory-mcp",
+    "test-global": "shared-memory-mcp",
     "install-global": "npm link"
   },
   "keywords": [

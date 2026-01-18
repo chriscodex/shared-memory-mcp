@@ -31,7 +31,7 @@ cat > ~/.cursor/mcp.json << 'EOF'
 {
   "mcpServers": {
     "memory": {
-      "command": "team-memory-mcp",
+      "command": "shared-memory-mcp",
       "args": [],
       "env": {
         "NODE_ENV": "production"
