@@ -56,87 +56,6 @@ class SupermemoryClient {
   }
 
   /**
-   * Consulta el perfil de usuario para obtener preferencias y hechos
-   * @param {string} userId - ID del usuario (opcional, usa default si no se especifica)
-   */
-  async getUserProfile(userId = null) {
-    if (!this.isReady()) {
-      throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
-    }
-
-    try {
-      const profileData = {
-        containerTag: userId || this.defaultUserId
-      };
-
-      const response = await fetch(`${this.baseUrl}/profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return this.formatProfileResults(data);
-    } catch (error) {
-      console.error('Error getting user profile:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Formatea los resultados del perfil de usuario
-   */
-  formatProfileResults(profileData) {
-    const profile = profileData.profile || {};
-    const staticFacts = profile.static || [];
-    const dynamicFacts = profile.dynamic || [];
-
-    return {
-      static: staticFacts,
-      dynamic: dynamicFacts,
-      hasPreferences: staticFacts.length > 0 || dynamicFacts.length > 0
-    };
-  }
-
-  async searchMemory(query, limit = 5) {
-    if (!this.isReady()) {
-      throw new Error('Supermemory API key not configured. Please set SUPERMEMORY_API_KEY environment variable.');
-    }
-
-    try {
-      const response = await fetch(`${this.baseUrl}/search`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          q: query,
-          containerTag: this.defaultUserId,
-          limit,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return this.formatSearchResults(data);
-    } catch (error) {
-      console.error('Error searching memory:', error);
-      throw error;
-    }
-  }
-
-  /**
    * Transforma el contenido para usar el nombre del usuario en lugar de términos genéricos
    * @param {string} text - Texto a transformar
    * @param {string} userName - Nombre del usuario
@@ -145,37 +64,93 @@ class SupermemoryClient {
   personalizeContent(text, userName) {
     if (!userName) return text;
 
-    let personalized = text;
+    let result = text;
 
-    // Reemplazos para términos genéricos en español
-    personalized = personalized
-      .replace(/\bal usuario\b/gi, `a ${userName}`)
-      .replace(/\bel usuario\b/gi, `${userName}`)
-      .replace(/\bla usuario\b/gi, `a ${userName}`)
-      .replace(/\blos usuarios\b/gi, `${userName}`)
-      .replace(/\blas usuarios\b/gi, `a ${userName}`)
-      // Reemplazos para primera persona en español
-      .replace(/\bme\b/gi, `a ${userName}`)
-      .replace(/\bmi\b/gi, `de ${userName}`)
-      .replace(/\bsoy\b/gi, `${userName} es`)
-      .replace(/\bme gusta\b/gi, `a ${userName} le gusta`)
-      .replace(/\bme gustan\b/gi, `a ${userName} le gustan`)
-      .replace(/\bprefiero\b/gi, `${userName} prefiere`)
-      .replace(/\bme llamo\b/gi, `se llama ${userName}`)
-      // Evitar reemplazos problemáticos - si ya menciona el nombre del usuario, no cambiar
-      .replace(new RegExp(`\\b${userName}\\b`, 'gi'), userName); // Mantener el nombre como está
+    // Proteger el nombre del usuario si ya está mencionado
+    const userNameRegex = new RegExp(`\\b${userName}\\b`, 'gi');
+    result = result.replace(userNameRegex, `@@PROTECTED_NAME@@`);
 
-    // Reemplazos para primera persona en inglés
-    personalized = personalized
-      .replace(/\bI\b/gi, `${userName}`)
-      .replace(/\bmy\b/gi, `${userName}'s`)
-      .replace(/\bmine\b/gi, `${userName}'s`)
-      .replace(/\bI'm\b/gi, `${userName} is`);
+    // Reemplazos usando placeholders temporales para evitar conflictos
 
-    // Reemplazo final para "yo" en español (después de los otros para evitar conflictos)
-    personalized = personalized.replace(/\byo\b/gi, `${userName}`);
+    // 1. Frases específicas primero
+    result = result
+      .replace(/\bme gusta\b/gi, `@@PERSONAL_GUSTA@@`)
+      .replace(/\bme gustan\b/gi, `@@PERSONAL_GUSTAN@@`)
+      .replace(/\bme encanta\b/gi, `@@PERSONAL_ENCANTA@@`)
+      .replace(/\bme encantan\b/gi, `@@PERSONAL_ENCHANTAN@@`)
+      .replace(/\bI love\b/gi, `@@ENGLISH_LOVE@@`)
+      .replace(/\bI like\b/gi, `@@ENGLISH_LIKE@@`)
+      .replace(/\bI prefer\b/gi, `@@ENGLISH_PREFER@@`);
 
-    return personalized;
+    // 2. Procesar pronombres primero (estos agregan el nombre del usuario)
+    result = result
+      .replace(/\byo\b/gi, `@@YO@@`)
+      .replace(/\bmi\b/gi, `@@MI@@`)
+      .replace(/\bme\b/gi, `@@ME@@`);
+
+    // 3. Procesar verbos que necesitan conjugación (solo si no están precedidos por frases ya procesadas)
+    result = result
+      .replace(/\bprefiero\b/gi, `@@PREFIERO@@`)
+      .replace(/\bsoy\b/gi, `@@SOY@@`)
+      .replace(/\bvivo\b/gi, `@@VIVO@@`)
+      .replace(/\btrabajo\b/gi, `@@TRABAJO@@`)
+      .replace(/\bcomo\b/gi, `@@COMO@@`)
+      .replace(/\bamo\b/gi, `@@AMO@@`);
+
+    // 4. Primera persona en inglés
+    result = result
+      .replace(/\bI'm\b/gi, `@@ENGLISH_IM@@`)
+      .replace(/\bI\b/gi, `@@ENGLISH_I@@`)
+      .replace(/\bmy\b/gi, `@@ENGLISH_MY@@`)
+      .replace(/\bmine\b/gi, `@@ENGLISH_MINE@@`);
+
+    // 5. Términos genéricos
+    result = result
+      .replace(/\bal usuario\b/gi, `@@AL_USUARIO@@`)
+      .replace(/\bel usuario\b/gi, `@@EL_USUARIO@@`)
+      .replace(/\bla usuario\b/gi, `@@LA_USUARIO@@`)
+      .replace(/\blos usuarios\b/gi, `@@LOS_USUARIOS@@`)
+      .replace(/\blas usuarios\b/gi, `@@LAS_USUARIOS@@`);
+
+    // Ahora reemplazar todos los placeholders
+    // Los pronombres agregan el nombre del usuario
+    result = result
+      .replace(/@@YO@@/g, `${userName}`)
+      .replace(/@@MI@@/g, `de ${userName}`)
+      .replace(/@@ME@@/g, `a ${userName}`);
+
+    // Los verbos se conjugan en tercera persona (sin nombre, porque ya viene del pronombre)
+    result = result
+      .replace(/@@PREFIERO@@/g, `prefiere`)
+      .replace(/@@SOY@@/g, `es`)
+      .replace(/@@VIVO@@/g, `vive`)
+      .replace(/@@TRABAJO@@/g, `trabaja`)
+      .replace(/@@COMO@@/g, `come`)
+      .replace(/@@AMO@@/g, `ama`);
+
+    // Frases completas ya incluyen el nombre
+    result = result
+      .replace(/@@PERSONAL_GUSTA@@/g, `a ${userName} le gusta`)
+      .replace(/@@PERSONAL_GUSTAN@@/g, `a ${userName} le gustan`)
+      .replace(/@@PERSONAL_ENCANTA@@/g, `a ${userName} encanta`)
+      .replace(/@@PERSONAL_ENCHANTAN@@/g, `a ${userName} encantan`)
+      .replace(/@@ENGLISH_LOVE@@/g, `${userName} loves`)
+      .replace(/@@ENGLISH_LIKE@@/g, `${userName} likes`)
+      .replace(/@@ENGLISH_PREFER@@/g, `${userName} prefers`)
+      .replace(/@@ENGLISH_IM@@/g, `${userName} is`)
+      .replace(/@@ENGLISH_I@@/g, `${userName}`)
+      .replace(/@@ENGLISH_MY@@/g, `${userName}'s`)
+      .replace(/@@ENGLISH_MINE@@/g, `${userName}'s`)
+      .replace(/@@AL_USUARIO@@/g, `a ${userName}`)
+      .replace(/@@EL_USUARIO@@/g, `${userName}`)
+      .replace(/@@LA_USUARIO@@/g, `a ${userName}`)
+      .replace(/@@LOS_USUARIOS@@/g, `${userName}`)
+      .replace(/@@LAS_USUARIOS@@/g, `a ${userName}`);
+
+    // Restaurar el nombre protegido
+    result = result.replace(/@@PROTECTED_NAME@@/g, userName);
+
+    return result;
   }
 
   /**
@@ -190,42 +165,28 @@ class SupermemoryClient {
     }
 
     try {
-      // Personalizar el contenido antes de guardar
+      // Personalizar automáticamente el contenido y título con el nombre del usuario
       const personalizedContent = this.personalizeContent(content, this.defaultUserId);
       const personalizedTitle = this.personalizeContent(title, this.defaultUserId);
 
-      const documentData = {
-        content: `${personalizedTitle}: ${personalizedContent}`,
-        containerTags: [this.defaultUserId],
-        customId: `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        metadata: {
-          author: this.defaultUserId,
-          author_name: this.defaultUserId,
-          created_by: this.defaultUserId,
-          source: 'mcp-team-memory'
-        }
+      const conversationData = {
+        conversationId: `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        messages: [
+          {
+            role: 'user',
+            content: `${personalizedTitle}: ${personalizedContent}`,
+          }
+        ],
+        containerTags: [this.defaultUserId]
       };
 
-      // Usar endpoint de memorias directamente para búsqueda inmediata
-      const memoryData = {
-        content: `${title}: ${content}`,
-        containerTags: [this.defaultUserId],
-        metadata: {
-          author: this.defaultUserId,
-          author_name: this.defaultUserId,
-          created_by: this.defaultUserId,
-          source: 'mcp-team-memory',
-          title: title
-        }
-      };
-
-      const response = await fetch(`${this.baseUrl.replace('v4', 'v3')}/memories`, {
+      const response = await fetch(`${this.baseUrl}/conversations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.apiKey}`,
         },
-        body: JSON.stringify(memoryData),
+        body: JSON.stringify(conversationData),
       });
 
       if (!response.ok) {

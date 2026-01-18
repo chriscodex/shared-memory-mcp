@@ -103,7 +103,7 @@ server.tool("team_memory_store",
                   `🔧 **To enable real storage:**\n` +
                   `• Get API key from https://supermemory.ai\n` +
                   `• Set SUPERMEMORY_API_KEY in environment\n` +
-                  `• This memory will then be searchable by all team members!`
+                  `• Content will be automatically personalized with your name for team memory!`
           }
         ]
       };
@@ -122,7 +122,7 @@ server.tool("team_memory_store",
                 `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
                 `👤 Stored in team memory\n` +
                 `🆔 Memory ID: ${result.id}\n\n` +
-                `💡 **Note:** This information will be searchable by team members in 1-2 minutes after processing.\n` +
+                `💡 **Note:** Content was automatically personalized with your name (${supermemory.defaultUserId}) for better team memory. This information will be searchable by team members in 1-2 minutes after processing.\n` +
                 `🔍 **Search suggestions:** ${tags.length > 0 ? tags.slice(0, 3).join(", ") : title.split(" ").slice(0, 3).join(", ")}`
         }
       ]
@@ -130,105 +130,6 @@ server.tool("team_memory_store",
   } catch (error) {
     console.error('Storage error:', error);
     throw new Error(`Error al almacenar memoria: ${error.message}`);
-  }
-});
-
-server.tool("user_profile_get",
-  "👤 Get user profile information including preferences, facts, and context automatically extracted from their stored memories.",
-  {
-    user_id: z.string().optional().describe("Optional: User ID to get profile for (default: current user). Use specific user names to get individual profiles.")
-  }, async ({ user_id }) => {
-  try {
-    const profile = await supermemory.getUserProfile(user_id);
-
-    if (!profile.hasPreferences) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `👤 **User Profile for ${user_id || 'team member'}**\n\n` +
-                `❌ No profile information found.\n\n` +
-                `💡 **Suggestion:** Add some memories with the user's name/tag to build their profile automatically.`
-          }
-        ]
-      };
-    }
-
-    const staticInfo = profile.static.length > 0 ?
-      profile.static.map(fact => `• ${fact}`).join('\n') :
-      'No static profile information available.';
-
-    const dynamicInfo = profile.dynamic.length > 0 ?
-      profile.dynamic.map(fact => `• ${fact}`).join('\n') :
-      'No recent dynamic information available.';
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: `👤 **User Profile for ${user_id || 'team member'}**\n\n` +
-            `📋 **Static Facts (long-term preferences):**\n${staticInfo}\n\n` +
-            `🔄 **Dynamic Context (recent activity):**\n${dynamicInfo}\n\n` +
-            `💡 **Note:** Profile information is automatically extracted from stored memories.`
-        }
-      ]
-    };
-  } catch (error) {
-    console.error('Error getting user profile:', error);
-    throw new Error(`Error al consultar perfil de usuario: ${error.message}`);
-  }
-});
-
-server.tool("user_memory_store",
-  "👤💾 Store personal information and preferences about the current user in team memory. This will be automatically personalized with the user's name for better profile building.",
-  {
-    content: z.string().describe("Personal information about the current user. Examples: 'I love traveling', 'My favorite food is Peruvian cuisine', 'I work as a developer'"),
-    title: z.string().optional().describe("Optional title for this personal memory. If not provided, will default to 'Personal Information'")
-  }, async ({ content, title = "Personal Information" }) => {
-  try {
-    if (!supermemory.isReady()) {
-      // Modo simulado cuando no hay API key
-      const memoryId = `demo_personal_${Date.now()}`;
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `✅ **Personal Memory Storage (Demo Mode)**\n\n` +
-                  `📝 **${title}**\n` +
-                  `📄 ${content}\n` +
-                  `👤 Will be personalized with user name when stored\n` +
-                  `🆔 Demo ID: ${memoryId}\n\n` +
-                  `⚠️ **Demo Mode:** This information was NOT permanently stored.\n\n` +
-                  `🔧 **To enable real storage:**\n` +
-                  `• Get API key from https://supermemory.ai\n` +
-                  `• Set SUPERMEMORY_API_KEY in environment\n` +
-                  `• This will help build your personal profile!`
-          }
-        ]
-      };
-    }
-
-    // Almacenamiento real con personalización automática
-    const result = await supermemory.storeMemory(content, title, ['personal', 'preferences']);
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: `✅ **Personal Memory Stored Successfully!**\n\n` +
-                `📝 **${title}**\n` +
-                `📄 ${content}\n` +
-                `👤 Personalized and stored in your profile\n` +
-                `🆔 Memory ID: ${result.id}\n\n` +
-                `💡 **Note:** This will help build your user profile. You can ask agents to check your preferences later!\n` +
-                `🔍 **Search suggestions:** "my preferences", "what I like", "my profile"`
-        }
-      ]
-    };
-  } catch (error) {
-    console.error('Personal storage error:', error);
-    throw new Error(`Error al almacenar información personal: ${error.message}`);
   }
 });
 
