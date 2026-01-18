@@ -120,6 +120,12 @@ Guarda que el endpoint de login es /api/auth/login
    - `LANGUAGE`: `en` (inglés) o `es` (español)
    - `DEFAULT_USER_ID`: Tu nombre o identificador
 
+3. **Configura el MCP global (opcional):**
+   ```bash
+   ./setup-env.sh
+   ```
+   Este script lee las variables de tu archivo `.env` y configura el MCP server globalmente en Cursor.
+
 ## ✨ Formateo Automático de Usuario
 
 **Todas las memorias se formatean automáticamente** con atribución clara del usuario:
