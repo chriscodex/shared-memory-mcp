@@ -52,17 +52,22 @@ Reinicia Cursor y tendrás memoria de equipo en todos tus proyectos:
 
 ## 💡 Uso con Agentes
 
-### Buscar información
+### 🔍 Buscar información
+Usa las frases: **"busca en la memoria"** o **"busca en la memoria del equipo"**
+
 ```
-Busca en la memoria del equipo sobre "autenticación JWT"
-¿Hay información guardada sobre configuración de base de datos?
+Busca en la memoria sobre "autenticación JWT"
+Busca en la memoria del equipo sobre configuración de base de datos
+¿Hay información guardada sobre Docker en la memoria?
 ```
 
-### Guardar información
+### 💾 Guardar información
+Usa las frases: **"guarda en la memoria"** o **"guarda en la memoria del equipo"**
+
 ```
-Guarda que usamos PostgreSQL como base de datos principal
-Almacena esta decisión de arquitectura: microservicios con API Gateway
-Guarda que el endpoint de login es /api/auth/login
+Guarda en la memoria que usamos PostgreSQL como base de datos principal
+Guarda en la memoria del equipo esta decisión: microservicios con API Gateway
+Guarda en la memoria que el endpoint de login es /api/auth/login
 ```
 
 **Nota:** Todas las memorias se guardan automáticamente con tu nombre (`DEFAULT_USER_ID`) y se formatean según el idioma configurado (`LANGUAGE`) para mejor identificación en búsquedas del equipo.
