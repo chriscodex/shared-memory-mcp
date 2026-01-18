@@ -1,13 +1,10 @@
 {
   "mcpServers": {
-    "supermemory": {
+    "memory": {
       "command": "node",
       "args": ["src/server.js"],
-      "cwd": "/c/Users/3003h/virtual-sapiens/projects/mcp-team-memory",
       "env": {
-        "NODE_ENV": "development",
-        "SUPERMEMORY_API_KEY": "sm_KSWYTJJ2J54TmdS1yEZdHd_JZBhunqyxBpIgtXRMzhJVWddZlxCdvKuAHpEyQsCPiApSUYTYQGFkiCpXQpnzQAP",
-        "SUPERMEMORY_BASE_URL": "https://api.supermemory.ai/v4"
+        "NODE_ENV": "development"
       }
     }
   }

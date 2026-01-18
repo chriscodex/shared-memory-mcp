@@ -1,138 +1,152 @@
-# MCP Supermemory - Team Memory Sharing
+# Team Memory MCP Server
 
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
-[![MCP SDK](https://img.shields.io/badge/MCP-SDK-blue)](https://modelcontextprotocol.io/)
 
-Un servidor MCP (Model Context Protocol) que integra Supermemory.ai para compartir memoria contextual entre agentes de Cursor en equipos de desarrollo.
+**Memoria compartida global para equipos usando Cursor + Supermemory.ai**
 
-## 🚀 Características
+Permite a los agentes de Cursor almacenar y recuperar conocimientos, decisiones y contexto del proyecto de forma persistente desde cualquier proyecto.
 
-- **Búsqueda de Memoria**: Consulta información relevante del equipo usando búsqueda semántica
-- **Almacenamiento Inteligente**: Guarda conversaciones y conocimientos importantes
-- **Integración Nativa**: Funciona directamente con agentes de Cursor
-- **Sin Mantenimiento**: Se ejecuta automáticamente con Cursor
+## 🚀 Instalación Global (Recomendado)
 
-## 📋 Prerrequisitos
-
-- Node.js >= 18.0.0
-- API Key de Supermemory.ai (para funcionalidad completa)
-- Cursor IDE
-
-## 🛠️ Instalación
-
-### 1. Clona e instala dependencias
-
+### Opción 1: Instalación Automática
 ```bash
-git clone <tu-repo>
-cd mcp-team-memory
-npm install
+# Desde la raíz del proyecto
+./install-global.sh
 ```
 
-### 2. Configura tu API Key de Supermemory (Recomendado)
-
+### Opción 2: Instalación Manual
 ```bash
-# Copia el archivo de ejemplo
+# Instalar dependencias
+npm install
+
+# Crear enlace simbólico global
+npm link
+
+# Configurar MCP global
+mkdir -p ~/.cursor
+cat > ~/.cursor/mcp.json << 'EOF'
+{
+  "mcpServers": {
+    "memory": {
+      "command": "team-memory-mcp",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
+EOF
+```
+
+### Configurar API Key y Variables
+```bash
+# Copiar archivo de ejemplo
 cp .env.example .env
 
-# Edita el archivo .env con tu API key real
+# Editar .env con tu API key de Supermemory.ai
 # SUPERMEMORY_API_KEY=tu_api_key_aqui
+
+# Configurar variables globales
+./setup-env.sh
 ```
 
-**Obtén tu API Key:**
-1. Ve a [https://supermemory.ai/](https://supermemory.ai/)
-2. Regístrate y obtén tu API key
+### Obtener API Key
+1. Ve a [Supermemory.ai](https://supermemory.ai/)
+2. Regístrate y obtén tu API key gratuita
 3. Pégala en el archivo `.env`
+4. Ejecuta `./setup-env.sh` para configurar globalmente
 
-> **Nota**: Sin la API key, funciona en modo simulado con datos de prueba.
+### ¡Listo! ✅
+Reinicia Cursor completamente y los agentes tendrán acceso global a:
+- `memory/team_memory_search` 🔍 - Buscar información
+- `memory/team_memory_store` 💾 - Guardar información
 
-### 3. Verifica que funcione
+**Estado:** ✅ Instalación global probada y funcionando
+**API:** ✅ Variables de entorno configuradas correctamente
 
-```bash
-npm start
+> **Nota:** Si ves mensajes de "modo demo", ejecuta `./setup-env.sh` para configurar las variables globales.
+
+## 📋 Requisitos
+
+- **Node.js** >= 18.0.0
+- **Cursor IDE**
+- **API Key** de Supermemory.ai (gratuita)
+
+## 🌍 Instalación Local vs Global
+
+### 🔗 **Global (Recomendado)**
+- ✅ Disponible en **todos los proyectos** de Cursor
+- ✅ No necesitas tener el proyecto abierto
+- ✅ Una sola instalación para todo el equipo
+- ⚠️ Requiere enlace simbólico global
+
+### 📁 **Local (Por Proyecto)**
+- ✅ Simple de configurar
+- ✅ Aislado por proyecto
+- ❌ Solo funciona cuando el proyecto está abierto
+- ❌ Necesitas configurar en cada proyecto
+
+**Recomendación:** Usa instalación global para equipos.
+
+## 💡 Uso con Agentes
+
+### Buscar información
+```
+Busca en la memoria del equipo sobre "autenticación JWT"
+¿Hay información guardada sobre configuración de base de datos?
 ```
 
-Deberías ver: `Supermemory MCP server running on stdio`
-
-## 🎯 Uso con Cursor
-
-### Configuración Automática
-
-El archivo `.cursor/mcp.json` ya está configurado. Solo reinicia Cursor para que detecte el servidor MCP.
-
-### Uso con Agentes
-
-Una vez configurado, los agentes de Cursor tendrán acceso automático a estas herramientas:
-
-#### 🔍 Buscar Memoria del Equipo
+### Guardar información
 ```
-¿Puedes buscar en la memoria del equipo sobre cómo manejamos errores de autenticación?
-```
-
-#### 💾 Almacenar Información
-```
-Guarda esta conversación sobre el manejo de JWT tokens en la memoria del equipo
+Guarda que usamos PostgreSQL como base de datos principal
+Almacena esta decisión de arquitectura: microservicios con API Gateway
+Guarda que el endpoint de login es /api/auth/login
 ```
 
 ## 🏗️ Arquitectura
 
 ```
-src/
-├── server.js          # Servidor MCP principal
-├── supermemory.js     # Cliente para Supermemory API (TODO)
-└── utils.js          # Utilidades auxiliares (TODO)
-
-.cursor/
-└── mcp.json          # Configuración de Cursor
+┌─────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Cursor    │────│   MCP Server     │────│  Supermemory.ai │
+│   Agent     │    │  (Node.js)       │    │     API         │
+└─────────────┘    └─────────────────┘    └─────────────────┘
 ```
+
+- **Cursor Agent**: Interface de usuario
+- **MCP Server**: Protocolo de comunicación
+- **Supermemory.ai**: Almacenamiento persistente
 
 ## 🔧 Desarrollo
 
-### Ejecutar en modo desarrollo
+### Ejecutar en desarrollo
 ```bash
-npm run dev
+npm run dev  # Con hot reload
 ```
 
-### Agregar nuevas herramientas
-1. Edita `src/server.js`
-2. Agrega la herramienta en `ListToolsRequestSchema`
-3. Implementa el handler en `CallToolRequestSchema`
+### Construir para producción
+```bash
+npm run start
+```
 
-## 📝 Estado del Proyecto
+## 🐛 Solución de Problemas
 
-### ✅ Implementado
-- Estructura básica del proyecto
-- Servidor MCP funcional
-- Cliente HTTP para Supermemory API
-- Dos herramientas básicas (búsqueda y almacenamiento)
-- Configuración de Cursor
-- Modo híbrido: simulado sin API key, real con API key
-- Manejo de errores y configuración de entorno
-- Documentación completa
+### "No se encontraron servidores MCP"
+- Reinicia Cursor completamente
+- Verifica que `.cursor/mcp.json` existe
 
-### 🔄 Próximos Pasos
-- [ ] Testing exhaustivo con API real de Supermemory
-- [ ] Filtrado avanzado por usuario/workspace
-- [ ] Sincronización automática de conversaciones de Cursor
-- [ ] Interfaz web para gestión manual de memorias
-- [ ] Métricas de uso y rendimiento
+### "API key not configured"
+- Verifica que el archivo `.env` existe
+- Confirma que `SUPERMEMORY_API_KEY` está configurada
 
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+### Modo simulado activo
+- Sin API key funciona en modo demo
+- Los datos no se almacenan permanentemente
 
 ## 📄 Licencia
 
-MIT - ver [LICENSE](LICENSE) para más detalles.
-
-## 🙋‍♂️ Soporte
-
-- 📧 Abre un issue en GitHub
-- 💬 Únete a la discusión en Discord/Slack del equipo
+MIT - Ver [LICENSE](LICENSE) para más detalles.
 
 ---
 
-**Proyecto en desarrollo activo** - ¡Tus contribuciones son bienvenidas!
+**¿Preguntas?** Abre un issue en GitHub.

@@ -1,209 +1,141 @@
 #!/usr/bin/env node
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ErrorCode,
-  ListToolsRequestSchema,
-  McpError,
-} from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+
+// Import the client
 import SupermemoryClient from './supermemory-client.js';
+const supermemory = new SupermemoryClient();
 
-class SupermemoryMCPServer {
-  constructor() {
-    this.supermemory = new SupermemoryClient();
+// Create MCP server
+const server = new McpServer({
+  name: "memory",
+  version: "1.0.0",
+  description: "Team Memory - Store and retrieve team knowledge, project information, and contextual data"
+});
 
-    this.server = new Server(
-      {
-        name: "supermemory-mcp",
-        version: "1.0.0",
-      },
-      {
-        capabilities: {
-          tools: {},
-        },
-      }
-    );
-
-    this.setupToolHandlers();
-    this.setupRequestHandlers();
-  }
-
-  setupToolHandlers() {
-    // Tool 1: Search team memory
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+// Register tools
+server.tool("team_memory_search",
+  "🔍 Search team memory for information, code, decisions, and knowledge. Returns relevant results with context and relevance scores.",
+  {
+    query: z.string().describe("Search query to find relevant information in team memory. Examples: 'authentication errors', 'API endpoints', 'project requirements'"),
+    user_id: z.string().optional().describe("Optional: Filter by specific user ID (default: 'team' for all team members)"),
+    limit: z.number().optional().describe("Optional: Maximum number of results to return (default: 5, max: 20)")
+  }, async ({ query, user_id = "team", limit = 5 }) => {
+  try {
+    if (!supermemory.isReady()) {
       return {
-        tools: [
+        content: [
           {
-            name: "search_team_memory",
-            description: "Search for relevant information in the team's shared memory",
-            inputSchema: {
-              type: "object",
-              properties: {
-                query: {
-                  type: "string",
-                  description: "The search query to find relevant memories"
-                },
-                user_id: {
-                  type: "string",
-                  description: "Optional: Filter by specific user (default: 'team')"
-                },
-                limit: {
-                  type: "number",
-                  description: "Optional: Maximum number of results (default: 5)"
-                }
-              },
-              required: ["query"]
-            }
-          },
-          {
-            name: "store_team_memory",
-            description: "Store a conversation or information in the team's shared memory",
-            inputSchema: {
-              type: "object",
-              properties: {
-                content: {
-                  type: "string",
-                  description: "The content to store in memory"
-                },
-                title: {
-                  type: "string",
-                  description: "A descriptive title for the memory"
-                },
-                tags: {
-                  type: "array",
-                  items: { type: "string" },
-                  description: "Optional: Tags for categorization"
-                },
-                user_id: {
-                  type: "string",
-                  description: "Optional: User who created this memory (default: current user)"
-                }
-              },
-              required: ["content", "title"]
-            }
+            type: "text",
+            text: `🔍 **Team Memory Search (Demo Mode)**\n\n` +
+                  `⚠️ **Supermemory API not configured**\n\n` +
+                  `📝 **Demo Result for "${query}"**\n` +
+                  `This is a simulated response. To enable real team memory search:\n` +
+                  `1. Get API key from https://supermemory.ai\n` +
+                  `2. Set SUPERMEMORY_API_KEY environment variable\n` +
+                  `3. Restart the MCP server\n\n` +
+                  `💡 **Demo shows:** Team memory would return relevant project information, code snippets, decisions, and knowledge.`
           }
         ]
       };
-    });
+    }
 
-    // Tool 2: Store team memory
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
+    const results = await supermemory.searchMemory(query, user_id, limit);
 
-      switch (name) {
-        case "search_team_memory":
-          return await this.searchTeamMemory(args);
-        case "store_team_memory":
-          return await this.storeTeamMemory(args);
-        default:
-          throw new McpError(
-            ErrorCode.MethodNotFound,
-            `Unknown tool: ${name}`
-          );
-      }
-    });
+    if (results.length === 0) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `🔍 **Team Memory Search Results**\n\nNo information found for query: "${query}"\n\n💡 **Suggestions:**\n• Try more specific terms (e.g., "JWT authentication" instead of "login")\n• Use broader search terms\n• Check if the information was recently added (may take 1-2 minutes to index)\n\n📚 **Available memory topics:** Try searching for terms like "authentication", "database", "API", "project", "team", "configuration"`
+          }
+        ]
+      };
+    }
+
+    const formattedResults = results.map((result, index) =>
+      `📄 **Result ${index + 1}: ${result.title || 'Untitled'}**\n` +
+      `📝 ${result.content}\n` +
+      `🏷️ Tags: ${result.tags.join(", ") || "none"}\n` +
+      `🎯 Relevance: ${(result.score * 100).toFixed(1)}%`
+    ).join("\n\n" + "─".repeat(50) + "\n\n");
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `🔍 **Team Memory Search Results for "${query}"**\n\n` +
+                `Found ${results.length} relevant memory entr${results.length === 1 ? 'y' : 'ies'}:\n\n` +
+                `${formattedResults}\n\n` +
+                `💡 **Pro tip:** Use specific keywords from these results to find related information!`
+        }
+      ]
+    };
+  } catch (error) {
+    console.error('Search error:', error);
+    throw new Error(`Error al buscar memoria: ${error.message}`);
   }
+});
 
-  async searchTeamMemory(args) {
-    try {
-      const { query, user_id = "team", limit = 5 } = args;
-
-      if (!this.supermemory.isReady()) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `🔍 Búsqueda simulada para "${query}":\n\n📝 **Resultado de Prueba**\nInformación relacionada con: ${query}\n🏷️ Tags: búsqueda, simulado\n\n⚠️ *API de Supermemory no configurada. Configure SUPERMEMORY_API_KEY para funcionalidad completa.*`
-            }
-          ]
-        };
-      }
-
-      const results = await this.supermemory.searchMemory(query, user_id, limit);
-
-      if (results.length === 0) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `🔍 No se encontraron resultados para "${query}" en la memoria del equipo.`
-            }
-          ]
-        };
-      }
-
-      const formattedResults = results.map(result =>
-        `📝 **${result.title}**\n${result.content}\n🏷️ Tags: ${result.tags.join(", ") || "sin tags"}\n📊 Relevancia: ${(result.score * 100).toFixed(1)}%`
-      ).join("\n\n");
+server.tool("team_memory_store",
+  "💾 Store information, decisions, code snippets, or knowledge in team-shared memory for future reference by all team members.",
+  {
+    content: z.string().describe("The information content to store in team memory. Be specific and detailed. Examples: 'User authentication uses JWT tokens with 24h expiry', 'Database connection string: postgresql://...'"),
+    title: z.string().describe("A clear, descriptive title for this memory entry. Examples: 'JWT Authentication Setup', 'Database Configuration', 'API Error Handling'"),
+    tags: z.array(z.string()).optional().describe("Optional: Tags for better organization and searchability. Examples: ['authentication', 'security'], ['database', 'config'], ['api', 'errors']"),
+    user_id: z.string().optional().describe("Optional: User ID who is storing this information (default: 'team' for shared knowledge)")
+  }, async ({ content, title, tags = [], user_id }) => {
+  try {
+    if (!supermemory.isReady()) {
+      // Modo simulado cuando no hay API key
+      const memoryId = `demo_${Date.now()}`;
 
       return {
         content: [
           {
             type: "text",
-            text: `🔍 Resultados de búsqueda para "${query}":\n\n${formattedResults}`
+            text: `✅ **Team Memory Storage (Demo Mode)**\n\n` +
+                  `📝 **${title}**\n` +
+                  `📄 ${content}\n` +
+                  `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
+                  `🆔 Demo ID: ${memoryId}\n\n` +
+                  `⚠️ **Demo Mode:** This information was NOT permanently stored.\n\n` +
+                  `🔧 **To enable real storage:**\n` +
+                  `• Get API key from https://supermemory.ai\n` +
+                  `• Set SUPERMEMORY_API_KEY in environment\n` +
+                  `• This memory will then be searchable by all team members!`
           }
         ]
       };
-    } catch (error) {
-      console.error('Search error:', error);
-      throw new McpError(
-        ErrorCode.InternalError,
-        `Error al buscar memoria: ${error.message}`
-      );
     }
+
+    // Almacenamiento real con Supermemory API
+    const result = await supermemory.storeMemory(content, title, tags, user_id);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `✅ **Team Memory Stored Successfully!**\n\n` +
+                `📝 **${title}**\n` +
+                `📄 ${content}\n` +
+                `🏷️ Tags: ${tags.length > 0 ? tags.join(", ") : "none"}\n` +
+                `👤 Stored by: ${user_id || 'team member'}\n` +
+                `🆔 Memory ID: ${result.id}\n\n` +
+                `💡 **Note:** This information will be searchable by team members in 1-2 minutes after processing.\n` +
+                `🔍 **Search suggestions:** ${tags.length > 0 ? tags.slice(0, 3).join(", ") : title.split(" ").slice(0, 3).join(", ")}`
+        }
+      ]
+    };
+  } catch (error) {
+    console.error('Storage error:', error);
+    throw new Error(`Error al almacenar memoria: ${error.message}`);
   }
+});
 
-  async storeTeamMemory(args) {
-    try {
-      const { content, title, tags = [], user_id } = args;
-
-      if (!this.supermemory.isReady()) {
-        // Modo simulado cuando no hay API key
-        const memoryId = `mem_${Date.now()}`;
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `✅ Memoria almacenada exitosamente (simulado)!\n\n📝 **${title}**\n${content}\n🏷️ Tags: ${tags.join(", ") || "sin tags"}\n🆔 ID: ${memoryId}\n\n⚠️ *API de Supermemory no configurada. Configure SUPERMEMORY_API_KEY para persistencia real.*`
-            }
-          ]
-        };
-      }
-
-      // Almacenamiento real con Supermemory API
-      const result = await this.supermemory.storeMemory(content, title, tags, user_id);
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `✅ Memoria almacenada exitosamente!\n\n📝 **${title}**\n${content}\n🏷️ Tags: ${tags.join(", ") || "sin tags"}\n🆔 ID: ${result.id}\n\n💾 Memoria persistente guardada en Supermemory.`
-          }
-        ]
-      };
-    } catch (error) {
-      console.error('Storage error:', error);
-      throw new McpError(
-        ErrorCode.InternalError,
-        `Error al almacenar memoria: ${error.message}`
-      );
-    }
-  }
-
-  setupRequestHandlers() {
-    // Add any additional request handlers here if needed
-  }
-
-  async run() {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-    console.error("Supermemory MCP server running on stdio");
-  }
-}
-
-// Run the server
-const server = new SupermemoryMCPServer();
-server.run().catch(console.error);
+// Connect using STDIO transport
+const transport = new StdioServerTransport();
+await server.connect(transport);
+console.error("Supermemory MCP server running on stdio");
